@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning for Kids</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .presentation-container {
+            max-width: 900px;
+            width: 95%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slide {
+            display: none;
+            padding: 40px;
+            min-height: 600px;
+            text-align: center;
+            position: relative;
+        }
+
+        .slide.active {
+            display: block;
+            animation: slideIn 0.5s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        h1 {
+            color: #4a5568;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 1.2em;
+            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .emoji {
+            font-size: 2em;
+            margin: 10px;
+        }
+
+        .pattern-game {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 3px solid #667eea;
+        }
+
+        .pattern-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+
+        .pattern-item {
+            font-size: 2em;
+            margin: 5px;
+            padding: 10px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .pattern-item:hover {
+            transform: scale(1.1);
+        }
+
+        .question-mark {
+            background: #ffd700;
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .sorting-area {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .category-box {
+            background: #f7fafc;
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 20px;
+            min-height: 150px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .category-box.drag-over {
+             background: #e6fffa;
+        }
+
+        .category-title {
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .sortable-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .sortable-item {
+            background: #fff;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 10px 15px;
+            cursor: move;
+            transition: all 0.3s;
+        }
+
+        .sortable-item:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .sortable-item.dragging {
+            opacity: 0.5;
+        }
+
+        .navigation {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            padding: 12px 24px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-counter {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .quiz-container {
+            background: #f7fafc;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .question {
+            font-size: 1.3em;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .options {
+            display: grid;
+            gap: 10px;
+        }
+
+        .option {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f1f5f9;
+        }
+
+        .option.selected.incorrect {
+            background: #f56565;
+            border-color: #f56565;
+            color: white;
+        }
+
+        .option.correct {
+            background: #48bb78;
+            border-color: #48bb78;
+            color: white;
+        }
+
+        .quiz-score {
+            font-size: 2em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .success-animation {
+            animation: bounce 0.6s ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .interactive-demo {
+            background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .demo-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 25px;
+            padding: 15px 30px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.2s;
+        }
+
+        .demo-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .prediction-result {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 10px 0;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation-container">
+        <div class="slide-counter">
+            <span id="slideNumber">1</span> / <span id="totalSlides">22</span>
+        </div>
+
+        <div class="slide active">
+            <h1>🤖 Introduction to Machine Learning 🤖</h1>
+            <div class="emoji">🎓💻🧠</div>
+            <p style="font-size: 1.5em; color: #667eea;">Let's explore how computers learn from data to make decisions and predictions!</p>
+            <div class="interactive-demo">
+                <h3>Welcome, Young Scientists! 🔬</h3>
+                <p>Get ready for an amazing journey into the world of Machine Learning!</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>What is Machine Learning? 🤔</h2>
+            <div class="pattern-game">
+                <div class="pattern-row">
+                    <div class="pattern-item">📚</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">🧠</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">🎯</div>
+                </div>
+                <h3>Learning from Examples</h3>
+                <p>Machine Learning means teaching computers to learn from examples, just like you learn in school!</p>
+                <h3>Finding Patterns</h3>
+                <p>Computers find patterns, just like we do when solving puzzles! 🧩</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Why Do We Need Machine Learning? 🌟</h2>
+            <div class="sorting-area">
+                <div class="category-box">
+                    <div class="category-title">🎯 Smart Predictions</div>
+                    <div class="emoji">🌤️📈🏠</div>
+                    <p>Weather, prices, games!</p>
+                </div>
+                <div class="category-box">
+                    <div class="category-title">📧 Sorting Things</div>
+                    <div class="emoji">✉️📸🗂️</div>
+                    <p>Emails, photos, files!</p>
+                </div>
+                <div class="category-box">
+                    <div class="category-title">🎮 Games & Puzzles</div>
+                    <div class="emoji">🎲🧩🎯</div>
+                    <p>Chess, riddles, challenges!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Cool Examples! 🚀</h2>
+            <div class="interactive-demo">
+                <h3>🤖 Sorting Robot</h3>
+                <button class="demo-btn" onclick="simulateRobot()">Watch Robot Sort!</button>
+                <div class="prediction-result" id="robotDemo">Click the button to see the robot in action!</div>
+            </div>
+            <div class="pattern-game">
+                <div class="pattern-row">
+                    <div class="pattern-item">🎵</div>
+                    <div class="pattern-item">📱</div>
+                    <div class="pattern-item">🎬</div>
+                    <div class="pattern-item">📺</div>
+                </div>
+                <p>Smart assistants, music apps, Netflix, YouTube all use Machine Learning!</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>How Machines Learn 📖</h2>
+            <div class="pattern-game">
+                <h3>Step 1: Observe Examples 👀</h3>
+                <div class="pattern-row">
+                    <div class="pattern-item">🐱</div>
+                    <div class="pattern-item">🐱</div>
+                    <div class="pattern-item">🐱</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">📊</div>
+                </div>
+                <h3>Step 2: Learn Patterns 🧠</h3>
+                <p>"All cats have whiskers and say meow!"</p>
+                <h3>Step 3: Apply Knowledge ✨</h3>
+                <p>Now they can recognize new cats they've never seen before!</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎮 Pattern Recognition Game</h2>
+            <div class="pattern-game">
+                <h3>Find What Comes Next!</h3>
+                <div class="pattern-row">
+                    <div class="pattern-item">🟡</div>
+                    <div class="pattern-item">🔵</div>
+                    <div class="pattern-item">🟡</div>
+                    <div class="pattern-item">🔵</div>
+                    <div class="pattern-item question-mark" onclick="revealAnswer(this, '🟡')">❓</div>
+                </div>
+                <div class="pattern-row">
+                    <div class="pattern-item">2</div>
+                    <div class="pattern-item">4</div>
+                    <div class="pattern-item">6</div>
+                    <div class="pattern-item">8</div>
+                    <div class="pattern-item question-mark" onclick="revealAnswer(this, '10')">❓</div>
+                </div>
+                <div class="pattern-row">
+                    <div class="pattern-item">🍎</div>
+                    <div class="pattern-item">🍌</div>
+                    <div class="pattern-item">🍎</div>
+                    <div class="pattern-item">🍌</div>
+                    <div class="pattern-item question-mark" onclick="revealAnswer(this, '🍎')">❓</div>
+                </div>
+                <p>Click on the ❓ to reveal answers!</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>Types of Machine Learning 📚</h2>
+            <div class="sorting-area">
+                <div class="category-box" style="background: #e6fffa; border-color: #38b2ac;">
+                    <div class="category-title" style="color: #38b2ac;">👨‍🏫 Supervised Learning</div>
+                    <p>Learning with a teacher! The AI learns from examples with correct answers.</p>
+                    <div class="emoji">✉️🏠✍️</div>
+                    <p style="font-size: 0.9em;">Spam emails, house prices, handwriting</p>
+                </div>
+                <div class="category-box" style="background: #fef5e7; border-color: #ed8936;">
+                    <div class="category-title" style="color: #ed8936;">🔍 Unsupervised Learning</div>
+                    <p>Learning by exploration! AI discovers hidden patterns without a teacher.</p>
+                    <div class="emoji">👥📰🚨</div>
+                    <p style="font-size: 0.9em;">Group customers, organize articles, find unusual things</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎯 Interactive Sorting Game</h2>
+            <p>Drag and drop items into the correct categories!</p>
+            <div class="sorting-area" id="sortingGame">
+                <div class="category-box" data-category="vehicles">
+                    <div class="category-title">🚗 Vehicles</div>
+                </div>
+                <div class="category-box" data-category="fruits">
+                    <div class="category-title">🍎 Fruits</div>
+                </div>
+                <div class="category-box" data-category="books">
+                    <div class="category-title">📚 Books</div>
+                </div>
+                <div class="category-box" data-category="vegetables">
+                    <div class="category-title">🥕 Vegetables</div>
+                </div>
+            </div>
+            <div class="sortable-items" id="sortableItems">
+                <div class="sortable-item" draggable="true" data-category="vehicles">🚗 Car</div>
+                <div class="sortable-item" draggable="true" data-category="fruits">🍎 Apple</div>
+                <div class="sortable-item" draggable="true" data-category="books">📖 Storybook</div>
+                <div class="sortable-item" draggable="true" data-category="vegetables">🥦 Broccoli</div>
+                <div class="sortable-item" draggable="true" data-category="vehicles">✈️ Airplane</div>
+                <div class="sortable-item" draggable="true" data-category="fruits">🍌 Banana</div>
+                <div class="sortable-item" draggable="true" data-category="books">📚 Textbook</div>
+                <div class="sortable-item" draggable="true" data-category="vegetables">🥕 Carrot</div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>How AI Makes Predictions 🔮</h2>
+            <div class="interactive-demo">
+                <h3>AI Prediction Simulator</h3>
+                <button class="demo-btn" onclick="simulatePrediction()">Make a Prediction!</button>
+                <div class="prediction-result" id="predictionDemo">Click to see AI make a prediction!</div>
+            </div>
+            <div class="pattern-game">
+                <div class="pattern-row">
+                    <div class="pattern-item">👀</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">🧠</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">📏</div>
+                    <div class="pattern-item">➡️</div>
+                    <div class="pattern-item">🎯</div>
+                </div>
+                <p>Find Patterns → Learn Rules → Make Guesses → Improve!</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>What Did We Learn Today? 🎓</h2>
+            <div class="sorting-area">
+                <div class="category-box">
+                    <div class="category-title">📚 Learning from Examples</div>
+                    <p>Just like how we learn in class!</p>
+                </div>
+                <div class="category-box">
+                    <div class="category-title">🧩 Pattern Recognition</div>
+                    <p>Finding patterns and solving puzzles!</p>
+                </div>
+                <div class="category-box">
+                    <div class="category-title">🤝 Computer Assistance</div>
+                    <p>Teaching computers to help us!</p>
+                </div>
+                <div class="category-box">
+                    <div class="category-title">🌍 Real-World Applications</div>
+                    <p>Patterns are everywhere around us!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🧠 Time for a Quiz! 🎯</h2>
+            <div class="interactive-demo">
+                <h3>Test Your Machine Learning Knowledge!</h3>
+                <div class="emoji">🤖📝✨</div>
+                <p>Let's see what you've learned about Machine Learning!</p>
+                <p>You'll have 10 questions to answer. Good luck! 🍀</p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 1 of 10</h2>
+                <div class="question">What does Machine Learning mean?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Teaching humans to use computers</div>
+                    <div class="option" data-correct="true">Teaching computers to learn from examples</div>
+                    <div class="option" data-correct="false">Building robots that walk</div>
+                    <div class="option" data-correct="false">Making computers faster</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 2 of 10</h2>
+                <div class="question">What comes next in this pattern? 🟡🔵🟡🔵___</div>
+                <div class="options">
+                    <div class="option" data-correct="false">🔵</div>
+                    <div class="option" data-correct="true">🟡</div>
+                    <div class="option" data-correct="false">🟢</div>
+                    <div class="option" data-correct="false">🔴</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 3 of 10</h2>
+                <div class="question">Which of these is an example of Machine Learning?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Using a calculator</div>
+                    <div class="option" data-correct="true">Netflix suggesting movies you might like</div>
+                    <div class="option" data-correct="false">Typing on a keyboard</div>
+                    <div class="option" data-correct="false">Playing music on a speaker</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 4 of 10</h2>
+                <div class="question">In Supervised Learning, what does the AI learn from?</div>
+                <div class="options">
+                    <div class="option" data-correct="true">Examples with correct answers</div>
+                    <div class="option" data-correct="false">Random guessing</div>
+                    <div class="option" data-correct="false">Making mistakes</div>
+                    <div class="option" data-correct="false">Playing games</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 5 of 10</h2>
+                <div class="question">What comes next in this number pattern? 2, 4, 6, 8, ___</div>
+                <div class="options">
+                    <div class="option" data-correct="false">9</div>
+                    <div class="option" data-correct="true">10</div>
+                    <div class="option" data-correct="false">12</div>
+                    <div class="option" data-correct="false">16</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 6 of 10</h2>
+                <div class="question">Which category does 'Apple' belong to?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Vehicles</div>
+                    <div class="option" data-correct="true">Fruits</div>
+                    <div class="option" data-correct="false">Books</div>
+                    <div class="option" data-correct="false">Vegetables</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 7 of 10</h2>
+                <div class="question">What is the first step in how machines learn?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Make predictions</div>
+                    <div class="option" data-correct="true">Observe examples</div>
+                    <div class="option" data-correct="false">Create rules</div>
+                    <div class="option" data-correct="false">Improve performance</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 8 of 10</h2>
+                <div class="question">Unsupervised Learning is like:</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Learning with a teacher</div>
+                    <div class="option" data-correct="true">Learning by exploration</div>
+                    <div class="option" data-correct="false">Following instructions</div>
+                    <div class="option" data-correct="false">Copying from friends</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 9 of 10</h2>
+                <div class="question">Which of these helps AI make better predictions?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Making random guesses</div>
+                    <div class="option" data-correct="false">Ignoring patterns</div>
+                    <div class="option" data-correct="true">Practice and more examples</div>
+                    <div class="option" data-correct="false">Working slower</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="quiz-container">
+                <h2>Question 10 of 10</h2>
+                <div class="question">Where can we find patterns in real life?</div>
+                <div class="options">
+                    <div class="option" data-correct="false">Only in computers</div>
+                    <div class="option" data-correct="false">Only in math class</div>
+                    <div class="option" data-correct="false">Only in games</div>
+                    <div class="option" data-correct="true">Everywhere around us</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <h2>🎉 Quiz Complete! 🎉</h2>
+            <div class="quiz-score" id="finalScore">Your Score: 0/10</div>
+            <div class="interactive-demo">
+                <h3 id="scoreMessage">Great job!</h3>
+                <div class="emoji">🏆🎯⭐</div>
+                <p>You've learned so much about Machine Learning today!</p>
+                <p>Keep exploring and finding patterns in the world around you! 🌟</p>
+            </div>
+        </div>
+
+        <div class="navigation">
+            <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)">← Previous</button>
+            <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        let slides;
+        let totalSlides;
+        let quizScore = 0;
+        let answeredQuestions = new Set();
+
+        // Store original elements for the sorting game to reset it properly
+        let originalSortingContainer;
+        let originalSortableItems;
+
+        function updateSlideCounter() {
+            document.getElementById('slideNumber').textContent = currentSlide + 1;
+        }
+
+        function showSlide(n) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slides[n].classList.add('active');
+
+            document.getElementById('prevBtn').disabled = n === 0;
+            document.getElementById('nextBtn').disabled = n === totalSlides - 1;
+
+            updateSlideCounter();
+
+            // Reset interactive slides when they are shown by checking their index
+            if (n === 5) resetPatternGame();
+            if (n === 7) resetSortingGame();
+            if (n === 10) resetQuiz(); // Reset quiz on the intro slide
+        }
+
+        function changeSlide(direction) {
+            const newSlide = currentSlide + direction;
+            if (newSlide >= 0 && newSlide < totalSlides) {
+                currentSlide = newSlide;
+                showSlide(currentSlide);
+            }
+        }
+
+        function revealAnswer(element, answer) {
+            element.textContent = answer;
+            element.classList.add('success-animation');
+            element.style.background = '#48bb78';
+            element.style.color = 'white';
+        }
+
+        function handleOptionSelect(event) {
+            const selectedOption = event.currentTarget;
+            const isCorrect = selectedOption.dataset.correct === 'true';
+            const optionsContainer = selectedOption.closest('.options');
+            const allOptions = optionsContainer.querySelectorAll('.option');
+
+            allOptions.forEach(opt => opt.style.pointerEvents = 'none');
+            
+            selectedOption.classList.add('selected');
+            if (isCorrect) {
+                selectedOption.classList.add('correct');
+                if (!answeredQuestions.has(currentSlide)) {
+                    quizScore++;
+                    answeredQuestions.add(currentSlide);
+                }
+            } else {
+                selectedOption.classList.add('incorrect');
+                const correctOption = optionsContainer.querySelector('.option[data-correct="true"]');
+                if (correctOption) {
+                    correctOption.classList.add('correct');
+                }
+            }
+
+            // Update final score display if this is the last quiz question
+            if (currentSlide === totalSlides - 2) { // Last quiz question is the second to last slide
+                setTimeout(updateFinalScore, 1500);
+            }
+        }
+
+        function updateFinalScore() {
+            document.getElementById('finalScore').textContent = `Your Score: ${quizScore}/10`;
+
+            let message = '';
+            if (quizScore >= 9) {
+                message = "Outstanding! You're a Machine Learning Expert! 🏆";
+            } else if (quizScore >= 7) {
+                message = 'Excellent work! You understand ML really well! 🌟';
+            } else if (quizScore >= 5) {
+                message = "Good job! You're learning fast! 👍";
+            } else {
+                message = "Keep practicing! You'll get better! 💪";
+            }
+            document.getElementById('scoreMessage').textContent = message;
+        }
+
+        function simulateRobot() {
+            const demo = document.getElementById('robotDemo');
+            const items = ['🧸', '🚗', '📚', '🍎'];
+            const boxes = ['Toys', 'Vehicles', 'Books', 'Food'];
+            demo.innerHTML = 'Robot is thinking... 🤔';
+            setTimeout(() => {
+                const randomIndex = Math.floor(Math.random() * items.length);
+                demo.innerHTML = `Robot sorted ${items[randomIndex]} into the ${boxes[randomIndex]} box! ✅`;
+            }, 1500);
+        }
+
+        function simulatePrediction() {
+            const demo = document.getElementById('predictionDemo');
+            const predictions = [
+                'Based on weather data: Tomorrow will be sunny! ☀️',
+                'Based on your music history: You might like jazz! 🎵',
+                'Based on your photos: You love cats! 🐱',
+                'Based on your games: You might enjoy puzzles! 🧩'
+            ];
+            demo.innerHTML = 'AI is analyzing patterns... 🧠';
+            setTimeout(() => {
+                demo.innerHTML = predictions[Math.floor(Math.random() * predictions.length)];
+            }, 2000);
+        }
+
+        function resetPatternGame() {
+            document.querySelectorAll('.pattern-game .question-mark').forEach(q => {
+                q.textContent = '❓';
+                q.style.background = '#ffd700';
+                q.style.color = '#4a5568';
+                q.classList.remove('success-animation');
+            });
+        }
+
+        function resetSortingGame() {
+            originalSortableItems.forEach(item => {
+                originalSortingContainer.appendChild(item);
+                item.style.background = '';
+                item.style.color = '';
+                item.style.cursor = 'move';
+                item.setAttribute('draggable', 'true');
+            });
+        }
+        
+        function resetQuiz() {
+            quizScore = 0;
+            answeredQuestions.clear();
+            document.querySelectorAll('.quiz-container .option').forEach(option => {
+                option.classList.remove('correct', 'incorrect', 'selected');
+                option.style.pointerEvents = 'auto';
+            });
+            document.getElementById('finalScore').textContent = `Your Score: 0/10`;
+            document.getElementById('scoreMessage').textContent = 'Great job!';
+        }
+
+        function setupDragAndDrop() {
+            const sortableItems = document.querySelectorAll('.sortable-item');
+            const categoryBoxes = document.querySelectorAll('.category-box');
+            let draggedItem = null;
+
+            sortableItems.forEach(item => {
+                item.addEventListener('dragstart', function() {
+                    draggedItem = this;
+                    setTimeout(() => this.classList.add('dragging'), 0);
+                });
+                item.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    draggedItem = null;
+                });
+            });
+
+            categoryBoxes.forEach(box => {
+                box.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    this.classList.add('drag-over');
+                });
+                box.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                box.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (draggedItem && draggedItem.dataset.category === this.dataset.category) {
+                        this.appendChild(draggedItem);
+                        draggedItem.style.background = '#48bb78';
+                        draggedItem.style.color = 'white';
+                        draggedItem.style.cursor = 'default';
+                        draggedItem.setAttribute('draggable', 'false');
+                    } else if (draggedItem) {
+                        draggedItem.style.background = '#f56565';
+                        draggedItem.style.color = 'white';
+                        setTimeout(() => {
+                            draggedItem.style.background = '';
+                            draggedItem.style.color = '';
+                        }, 1000);
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            slides = document.querySelectorAll('.slide');
+            totalSlides = slides.length;
+            document.getElementById('totalSlides').textContent = totalSlides;
+
+            originalSortingContainer = document.getElementById('sortableItems');
+            originalSortableItems = Array.from(originalSortingContainer.children);
+
+            document.querySelectorAll('.quiz-container .option').forEach(option => {
+                option.addEventListener('click', handleOptionSelect);
+            });
+            
+            setupDragAndDrop();
+            showSlide(0);
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+            else if (e.key === 'ArrowRight') changeSlide(1);
+        });
+    </script>
+</body>
+</html>
